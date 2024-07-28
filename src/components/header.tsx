@@ -29,10 +29,10 @@ const Header = () => {
         },
       )}
     >
-      <div className="flex h-[49px] items-center justify-between px-4 bg-gray-800 md:bg-zinc-100">
+      <div className="flex h-[49px] items-center justify-between px-4 bg-gray-800 md:bg-zinc-200">
         <div className="flex items-center space-x-4">
           <Link
-            href="/"
+            href="/dashboard"
             className="flex flex-row space-x-3 items-center justify-center md:hidden"
           >
             <Image src={logo} width={160} height={60} alt="logo" />

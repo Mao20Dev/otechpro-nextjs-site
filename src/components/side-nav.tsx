@@ -16,7 +16,7 @@ const SideNav = () => {
     <div className="md:w-60 bg-gray-800 h-screen flex-1 fixed border-r border-zinc-200 hidden md:flex">
       <div className="flex flex-col space-y-6 w-full">
         <Link
-          href="/"
+          href="/dashboard"
           className="flex flex-row space-x-3 items-center justify-center md:justify-center md:px-6  h-12 w-full"
         >
           <Image src={logo} width={160} height={60} alt="logo" />
@@ -53,11 +53,11 @@ const MenuItem = ({ item }: { item: SideNavItem }) => {
           >
             <div className="flex flex-row space-x-3 items-center">
               {item.icon}
-              <span className="font-semibold text-base  flex text-white">{item.title}</span>
+              <span className="font-semibold text-base  flex text-zinc-200">{item.title}</span>
             </div>
 
             <div className={`${subMenuOpen ? 'rotate-180' : ''} flex`}>
-              <Icon icon="lucide:chevron-down" width="22" height="22" className='text-white'/>
+              <Icon icon="lucide:chevron-down" width="22" height="22" className='text-zinc-200'/>
             </div>
           </button>
 
@@ -72,7 +72,7 @@ const MenuItem = ({ item }: { item: SideNavItem }) => {
                       subItem.path === pathname ? 'font-bold' : ''
                     }`}
                   >
-                    <span className="text-white text-base">{subItem.title}</span>
+                    <span className="text-zinc-200 text-base">{subItem.title}</span>
                   </Link>
                 );
               })}
@@ -87,7 +87,7 @@ const MenuItem = ({ item }: { item: SideNavItem }) => {
           }`}
         >
           {item.icon}
-          <span className="font-semibold text-base flex text-white">{item.title}</span>
+          <span className="font-semibold text-base flex text-zinc-200">{item.title}</span>
         </Link>
       )}
     </div>

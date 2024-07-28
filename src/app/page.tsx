@@ -1,21 +1,21 @@
-import { auth, currentUser } from "@clerk/nextjs/server";
+import Link from "next/link";
+import Image from "next/image";
+import backgroundImage from "../assets/background.jpg";
 
-
-export default async function  Home() {
-  const { userId } = auth();
-  console.log(userId);
-
-  const user = await currentUser();
-  console.log(user);
+export default function Home() {
   return (
-    <>
-      <span className="font-bold text-4xl text-gray-800">Home</span>
-      <div className="border-dashed border border-zinc-500 w-full h-12 rounded-lg">{user?.firstName}</div>
-      <div className="border-dashed border border-zinc-500 w-full h-64 rounded-lg">{user?.lastName}</div>
-      <div className="border-dashed border border-zinc-500 w-full h-64 rounded-lg"></div>
-      <div className="border-dashed border border-zinc-500 w-full h-64 rounded-lg"></div>
-      <div className="border-dashed border border-zinc-500 w-full h-64 rounded-lg"></div>
-      <div className="border-dashed border border-zinc-500 w-full h-64 rounded-lg"></div>
-    </>
+    <div className="flex h-screen">
+      <div className="w-full  flex flex-col items-center justify-center bg-gray-800 text-white p-10">
+        <h1 className="text-4xl font-bold mb-6">¡Bienvenido a OTECHPRO!</h1>
+        <p className="text-lg mb-6">
+          Gestiona tus proyectos de manera eficiente y eficaz con nuestra herramienta innovadora.
+        </p>
+        <Link href="/dashboard">
+          <button className="bg-gray-900 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded">
+            Ir al Dashboard
+          </button>
+        </Link>
+      </div>
+    </div>
   );
 }

@@ -5,6 +5,7 @@ import { Inter } from 'next/font/google';
 
 import {
   ClerkProvider,
+  RedirectToSignIn,
   SignInButton,
   SignedIn,
   SignedOut,
@@ -26,10 +27,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider localization={esMX}>
+    <ClerkProvider localization={esMX} afterSignOutUrl="/">
       <html lang="es">
         <body className={`bg-white ${inter.className}`}>
-          {children}
+        
+            {children}
+          
         </body>
       </html>
     </ClerkProvider>
