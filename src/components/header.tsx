@@ -1,10 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image'
 
 import Link from 'next/link';
-import { useSelectedLayoutSegment } from 'next/navigation';
+import {  useSelectedLayoutSegment } from 'next/navigation';
 
 import useScroll from '@/hooks/use-scroll';
 import { cn } from '@/lib/utils';
@@ -13,11 +13,14 @@ import { useUser } from '@clerk/nextjs';
 
 import logo from '../assets/mainlogo.png';
 
+
 const Header = () => {
+  
   const scrolled = useScroll(5);
   const selectedLayout = useSelectedLayoutSegment();
 
   const { user } = useUser();
+
 
   return (
     <div
@@ -37,6 +40,8 @@ const Header = () => {
           >
             <Image src={logo} width={160} height={60} alt="logo" />
           </Link>
+
+          
         </div>
 
         <div className="hidden md:flex">
