@@ -76,6 +76,12 @@ const config = {
         'button-blue-gradient': 'linear-gradient(60deg, rgb(6, 134, 188), rgb(3, 63, 89))',
         'button-green-gradient': 'linear-gradient(60deg,#288c6c,#4ea752)',
       },
+      fontSize: {
+        'title':'text-5xl',
+        'subtitle':'text-3xl',
+        'paragraph':'text-xl',
+        'small':'text-sm',
+      }
     },
   },
   plugins: [require("tailwindcss-animate")],

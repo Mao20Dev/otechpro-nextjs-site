@@ -1,7 +1,7 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import Image from "next/image";
 import backgroundImage from "@/assets/mainbackground.jpg";
-import CompanyCards from "./_components/CompanyCards";
+import CompanyCards from "./_components-dashboard/CompanyCards";
 
 export default async function  Home() {
   const { userId } = auth();
@@ -12,11 +12,11 @@ export default async function  Home() {
   return (
     <>
 
-      <div className="font-bold text-4xl text-gray-800 pt-4 md:pt-0 mb-8">Principal</div>
+      <div className="font-bold text-2xl text-gray-800 pt-4 md:pt-0 mb-8">Principal</div>
 
       
       
-      <div className=" w-full h-auto rounded-lg grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6  ">
+      <div className=" w-full h-auto rounded-lg grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8  ">
           <CompanyCards />
           <CompanyCards />
           <CompanyCards />
