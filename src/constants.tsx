@@ -5,38 +5,38 @@ import { SideNavItem } from './types';
 export const SIDENAV_ITEMS: SideNavItem[] = [
   {
     title: 'Home',
-    path: '/',
+    path: '/dashboard',
     icon: <Icon icon="lucide:home" width="22" height="22"  className="text-white"/>,
   },
   {
     title: 'Projects',
-    path: '/projects',
+    path: '/dashboard/projects',
     icon: <Icon icon="lucide:folder" width="22" height="22" className="text-white"/>,
     submenu: true,
     subMenuItems: [
-      { title: 'All', path: '/projects' },
-      { title: 'Web Design', path: '/projects/web-design' },
-      { title: 'Graphic Design', path: '/projects/graphic-design' },
+      { title: 'All', path: '/dashboard/projects' },
+      { title: 'Web Design', path: '/dashboard/projects/web-design' },
+      { title: 'Graphic Design', path: '/dashboard/projects/graphic-design' },
     ],
   },
   {
     title: 'Messages',
-    path: '/messages',
+    path: '/dashboard/messages',
     icon: <Icon icon="lucide:mail" width="22" height="22" className="text-white" />,
   },
   {
     title: 'Settings',
-    path: '/settings',
+    path: '/dashboard/settings',
     icon: <Icon icon="lucide:settings" width="22" height="22" className="text-white"/>,
     submenu: true,
     subMenuItems: [
-      { title: 'Account', path: '/settings/account' },
-      { title: 'Privacy', path: '/settings/privacy' },
+      { title: 'Account', path: '/dashboard/settings/account' },
+      { title: 'Privacy', path: '/dashboard/settings/privacy' },
     ],
   },
   {
     title: 'Help',
-    path: '/help',
+    path: '/dashboard/help',
     icon: <Icon icon="lucide:help-circle" width="22" height="22" className="text-white" />,
   },
 ];
