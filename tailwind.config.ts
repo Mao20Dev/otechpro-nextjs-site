@@ -74,6 +74,7 @@ const config = {
       },
       backgroundImage: {
         'button-blue-gradient': 'linear-gradient(60deg, rgb(6, 134, 188), rgb(3, 63, 89))',
+        'button-blue-gradient-hover': 'linear-gradient(60deg, rgb(56, 134, 188), rgb(53, 63, 89))',
         'button-green-gradient': 'linear-gradient(60deg,#288c6c,#4ea752)',
       },
       fontSize: {

@@ -2,6 +2,7 @@
 
 import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
+import { Skeleton } from "@/components/ui/skeleton"
 
 
 import Link from 'next/link'
@@ -13,6 +14,7 @@ import Device from "./_components-plant/DeviceButton"
 
 
 function Plant({}) {
+    const [loading, setLoading] = useState(true);
     const [userData, setUserData] = useState<any>(null);
     const [filteredDevices, setFilteredDevices] = useState<any[]>([]);
     const param = useSearchParams();
@@ -51,6 +53,7 @@ function Plant({}) {
                     });
                 });
                 setFilteredDevices(devices);
+                setLoading(false);
             }
         };
         fetchUser();
@@ -72,19 +75,29 @@ function Plant({}) {
             {name}
         </div>
 
-        <div className="bg-gray-800 w-full lg:w-1/2 h-auto rounded-2xl px-6 py-8 ">
-            <div className="w-full flex flex-row justify-between items-center mb-6">
-                <div className="text-md text-zinc-200 pt-4 md:pt-0 ">{plantName}</div>
-                <Input  placeholder="Buscar dispositivo" type="search" className="w-1/4 text-sm" />
-            </div>
-            
-            <Separator classname='text-zinc-200 bg-zinc-200'  />
+        {loading ? (
+        <>
+            <Skeleton className="h-[525px] w-full rounded-xl" />
+        
+        </>
+        ) : (
+        <>
+            <div className="bg-gray-800 w-full lg:w-full h-auto rounded-2xl px-6 py-8 ">
+                <div className="w-full flex flex-row justify-between items-center mb-6">
+                    <div className="text-md text-zinc-200 pt-4 md:pt-0 ">{plantName}</div>
+                    <Input  placeholder="Buscar dispositivo" type="search" className="w-3/4 sm:w-1/2 md:w-1/2 lg:w-1/4 text-sm" />
+                </div>
+                
+                <Separator classname='text-zinc-200 bg-zinc-200'  />
 
-            <div className="bg-gray-800 w-full  h-auto rounded-2xl px-6 py-8 grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 gap-2  ">
-                {devices}
+                <div className="bg-gray-800 w-full  h-auto rounded-2xl px-6 py-8 grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4  ">
+                    {devices}
+                </div>
             </div>
-            
-        </div>
+        </>
+        )}
+
+        
         
         
         

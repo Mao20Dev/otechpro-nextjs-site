@@ -5,6 +5,8 @@ import Image from "next/image";
 import backgroundImage from "@/assets/mainbackground.jpg";
 import CompanyCards from "./_components-dashboard/CompanyCards";
 import {  useEffect, useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton"
+
 
 export default function  Home() {
   const [userData, setUserData] = useState<any>(null);
@@ -12,6 +14,7 @@ export default function  Home() {
   const [hasCompanies, setHasCompanies] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
   
   const user = useUser();
 
@@ -50,6 +53,7 @@ export default function  Home() {
             const responseData = await response.json();
             setFullUserData(responseData);
             console.log(responseData);
+            setLoading(false);
           }
         } catch (error) {
           console.error('Error al enviar la información del usuario a la API de Lambda', error);
@@ -68,7 +72,19 @@ export default function  Home() {
       <div className="font-bold text-xl text-gray-800 pt-4 md:pt-0 mb-8">Principal</div>
       
       <div className=" w-full h-auto rounded-lg grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8  ">
-          <CompanyCards company={fullUserData?.User.Companies} />
+        {loading ? (
+          <>
+            <Skeleton className="h-[155px] w-full rounded-xl" />
+            <Skeleton className="h-[155px] w-full rounded-xl" />
+            <Skeleton className="h-[155px] w-full rounded-xl" />
+          </>
+        ) : (
+          <>
+            <CompanyCards company={fullUserData?.User.Companies} />
+          </>
+          
+        )}
+          
       </div>
     </>
   );
