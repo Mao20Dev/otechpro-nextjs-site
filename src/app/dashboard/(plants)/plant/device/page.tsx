@@ -161,17 +161,41 @@ const fetchData = async (startDate: string, endDate: string) => {
     console.log('chartData', chartData);
 
     const chartsComponent = Object.keys(filteredData.variables).map((key, index) => {
+        console.log('key', key);
+        console.log('filteredData.variables[key]', filteredData.variables[key]);
+    
+        // Convertir los valores a números y calcular la diferencia si la clave es 'Potencia activa total'
+        let totalDifference = 0;
+        if (key === 'Potencia activa total') {
+            const values = filteredData.variables[key].map(Number); // Convertir todos los valores a números
+            if (values.length > 1) {
+                totalDifference = values[values.length - 1] - values[0]; // Calcular la diferencia
+            }
+        }else if(key === 'Potencia reactiva total'){
+            const values = filteredData.variables[key].map(Number);
+            if (values.length > 1) {
+                totalDifference = values[values.length - 1] - values[0];
+            }
+        }
+    
         return (
             <div className='flex flex-col py-5 px-1 bg-button-green-gradient rounded-2xl' key={index}>
                 <div className='w-[100%] flex justify-center pb-4 text-md font-semibold text-slate-200'>
                     {key}
                 </div>
+                {key === 'Potencia activa total'&& (
+                    <div className='w-[100%] flex justify-center pb-4 text-md font-semibold text-slate-200'>Total consumido: {totalDifference}</div> // Mostrar la diferencia calculada
+                )}
+                {key === 'Potencia reactiva total'&& (
+                    <div className='w-[100%] flex justify-center pb-4 text-md font-semibold text-slate-200'>Total consumido: {totalDifference}</div> // Mostrar la diferencia calculada
+                )}
                 <div className='w-[100%] '>
                     <Graph data={formatData(filteredData.time, filteredData.variables[key])} id={key} />
                 </div>
             </div>
         );
     });
+    
 
     return (
         <>
