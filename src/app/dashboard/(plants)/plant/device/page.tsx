@@ -3,7 +3,10 @@
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import React from 'react'
-import Graph from './_components-device/Chart';
+
+
+import dynamic from 'next/dynamic';
+const Graph = dynamic(() => import('./_components-device/Chart'), { ssr: false });
 
 
 function formatData(timeArray: any, dataArray: any) {
