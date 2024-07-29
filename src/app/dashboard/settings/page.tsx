@@ -3,7 +3,7 @@ import React from 'react';
 const SettingsPage = () => {
   return (
     <>
-      <span className="font-bold text-2xl text-gray-800">Settings</span>
+      <span className="font-bold text-xl text-gray-800">Settings</span>
 
       <div className="border-dashed border border-zinc-500 w-full h-12 rounded-lg"></div>
       <div className="border-dashed border border-zinc-500 w-full h-64 rounded-lg"></div>
