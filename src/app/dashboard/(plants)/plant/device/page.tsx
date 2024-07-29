@@ -23,7 +23,7 @@ import {
 import dynamic from 'next/dynamic';
 import { Input } from '@/components/ui/input';
 
-import debounce from 'lodash.debounce'
+
 
 const Graph = dynamic(() => import('./_components-device/Chart'), { ssr: false });
 
@@ -129,24 +129,23 @@ const fetchData = async (startDate: string, endDate: string) => {
     }, []);
 
     const handleSearchChange = (event: any) => {
-        setSearchTerm(event.target.value);
-        debouncedSearch(event.target.value);
+        const term = event.target.value;
+        setSearchTerm(term);
+        
+        const newFilteredData = {
+            time: chartData.time,
+            variables: Object.keys(chartData.variables).reduce((result: any, key: any) => {
+                if (key.toLowerCase().includes(term.toLowerCase())) {
+                    result[key] = chartData.variables[key];
+                }
+                return result;
+            }, {})
+        };
+        setFilteredData(newFilteredData);
     }
+    
 
-    const debouncedSearch = 
-        debounce((searchTerm: any) => {
-            const newFilteredData = {
-                time: chartData.time,
-                variables: Object.keys(chartData.variables).reduce((result: any, key: any) => {
-                    if (key.toLowerCase().includes(searchTerm.toLowerCase())) {
-                        result[key] = chartData.variables[key];
-                    }
-                    return result;
-                }, {})
-            };
-            setFilteredData(newFilteredData);
-        }, 150)
-
+    
     // aca hago el segundo fetch para meterSN y table y luego pasarlo a fetchData con la fecha filtrada
 
     const handleFilterClick = () => {
