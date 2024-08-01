@@ -68,6 +68,9 @@ function Device({}) {
         from: subDays(new Date(), 14),
         to: addDays(new Date(), 0),
     });
+    
+    const [prevDate, setPrevDate] = React.useState<DateRange | undefined>(date);
+
     console.log(date);
     
     React.useEffect(() => { 
@@ -148,12 +151,13 @@ const fetchData = async (startDate: string, endDate: string) => {
     
     // aca hago el segundo fetch para meterSN y table y luego pasarlo a fetchData con la fecha filtrada
 
-    const handleFilterClick = () => {
-        if (date?.from && date?.to) {
+     const handlePopoverClose = () => {
+        if (date?.from && date?.to && (date.from !== prevDate?.from || date.to !== prevDate?.to)) {
             const startDate = format(date.from, "yyyy-MM-dd") + " 00:00:00";
             const endDate = format(date.to, "yyyy-MM-dd") + " 23:59:59";
             setLoadingFilter(true);
             fetchData(startDate, endDate);
+            setPrevDate(date);
         }
     }
 
@@ -298,7 +302,7 @@ const fetchData = async (startDate: string, endDate: string) => {
                 <>
                 <div className='text-md text-gray-800 flex justify-start items-end'>Filtrar por fecha: </div>
                     <div className={cn("grid gap-2")}>
-                        <Popover>
+                        <Popover onOpenChange={(open) => !open && handlePopoverClose()}>
                         <PopoverTrigger asChild>
                             <Button
                             id="date"
@@ -319,7 +323,7 @@ const fetchData = async (startDate: string, endDate: string) => {
                                 format(date.from, "LLL dd, y")
                                 )
                             ) : (
-                                <span>Pick a date</span>
+                                <span>Selecciona una fecha</span>
                             )}
                             </Button>
                         </PopoverTrigger>
@@ -336,8 +340,7 @@ const fetchData = async (startDate: string, endDate: string) => {
                         </Popover>
                     </div>
                     <div className='w-full flex justify-start lg:justify-end'>
-                        <Button variant="custom"  className='mt-2' onClick={handleFilterClick}>Filtrar</Button>
-                        <Button variant="custom"  className='mt-2 ml-4' onClick={handleDownloadClick}>Descargar datos</Button>  
+                        <Button variant="custom"  className='mt-2' onClick={handleDownloadClick}>Descargar datos</Button>  
                     </div>
                     </>}
                     
