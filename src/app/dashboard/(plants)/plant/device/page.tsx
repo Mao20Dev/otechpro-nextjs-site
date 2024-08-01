@@ -158,6 +158,66 @@ const fetchData = async (startDate: string, endDate: string) => {
     }
 
 
+    const handleDownloadClick = () => {
+        if (filteredData.time.length === 0) {
+            alert("No data available to download.");
+            return;
+        }
+    
+        let csvContent = "data:text/csv;charset=utf-8,";
+        const headers = ["time", ...Object.keys(filteredData.variables)];
+        csvContent += headers.join(",") + "\n";
+    
+        for (let i = 0; i < filteredData.time.length; i++) {
+            const row = [filteredData.time[i]];
+            headers.slice(1).forEach(header => {
+                row.push(filteredData.variables[header][i]);
+            });
+            csvContent += row.join(",") + "\n";
+        }
+    
+        // Calcular Potencia activa total consumida y Potencia reactiva total consumida
+        let potenciaActivaTotal = 0;
+        let potenciaReactivaTotal = 0;
+        let hasPotenciaActiva = false;
+        let hasPotenciaReactiva = false;
+    
+        if (filteredData.variables["Potencia activa total"]) {
+            const values = filteredData.variables["Potencia activa total"].map(Number);
+            if (values.length > 1) {
+                potenciaActivaTotal = values[values.length - 1] - values[0];
+            }
+            hasPotenciaActiva = true;
+        }
+    
+        if (filteredData.variables["Potencia reactiva total"]) {
+            const values = filteredData.variables["Potencia reactiva total"].map(Number);
+            if (values.length > 1) {
+                potenciaReactivaTotal = values[values.length - 1] - values[0];
+            }
+            hasPotenciaReactiva = true;
+        }
+    
+        // Agregar los valores totales al contenido del CSV si existen
+        csvContent += "\n";
+        if (hasPotenciaActiva) {
+            csvContent += `Potencia activa total consumida:,${potenciaActivaTotal}\n`;
+        }
+        if (hasPotenciaReactiva) {
+            csvContent += `Potencia reactiva total consumida:,${potenciaReactivaTotal}\n`;
+        }
+    
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `Datos_${deviceName}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+    
+
+
     console.log('chartData', chartData);
 
     const chartsComponent = Object.keys(filteredData.variables).map((key, index) => {
@@ -206,9 +266,7 @@ const fetchData = async (startDate: string, endDate: string) => {
                 <span className='text-sm text-muted-foreground '>{'  ->  '}</span>
                 {deviceName}
             </div>
-            {/* <h1>Device Information</h1>
-            <p>Device ID: {id}</p>
-            <p>Device Name: {deviceName}</p> */}
+            
 
             {deviceType === 'integrationDevice' && (
                 <>
@@ -277,7 +335,11 @@ const fetchData = async (startDate: string, endDate: string) => {
                         </PopoverContent>
                         </Popover>
                     </div>
-                    <Button variant="custom"  className='mt-2' onClick={handleFilterClick}>Filtrar</Button></>}
+                    <div className='w-full flex justify-start lg:justify-end'>
+                        <Button variant="custom"  className='mt-2' onClick={handleFilterClick}>Filtrar</Button>
+                        <Button variant="custom"  className='mt-2 ml-4' onClick={handleDownloadClick}>Descargar datos</Button>  
+                    </div>
+                    </>}
                     
 
                 </div>

@@ -26,6 +26,7 @@
     align-items: center;
     margin-top: 6px;
     flex-wrap: nowrap;
+    
   }
   
   .dygraph-axis-label {
@@ -42,3 +43,7 @@
     padding-right: 0.3rem;
   }
   
+
+  .graph-container {
+    overflow: visible !important;
+}
