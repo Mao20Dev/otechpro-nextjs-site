@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import React from 'react'
 import IntegrationDevice from './_components-device/IntegrationDevice';
+import AsystomDevice from './_components-device/AsystomDevice';
 
 
 
@@ -50,7 +51,7 @@ function Device({}) {
             )}
 
             {deviceType === 'standardDevice' && (
-                <p>MAC: {mac}</p>
+                <AsystomDevice />
             )}
 
             
