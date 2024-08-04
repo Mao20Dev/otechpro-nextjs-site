@@ -252,7 +252,7 @@ const fetchData = async (startDate: string, endDate: string) => {
                     <div className='w-[100%] flex justify-center pb-4 text-md font-semibold text-slate-200'>Total consumido: {totalDifference}</div> // Mostrar la diferencia calculada
                 )}
                 <div className='w-[100%] '>
-                    <Graph data={formatData(filteredData.time, filteredData.variables[key])} id={key} />
+                    <Graph data={formatData(filteredData.time, filteredData.variables[key])} id={key} graphStyle={{ height: '350px' }} />
                 </div>
             </div>
         );
