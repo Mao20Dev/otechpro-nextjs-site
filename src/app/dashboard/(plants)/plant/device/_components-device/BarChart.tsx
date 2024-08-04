@@ -145,7 +145,7 @@ function barChartPlotter(e: any) {
     }
 }
 
-export default function BarGraph(props: any) {
+export default function BarChart(props: any) {
     const graphEl: any = useRef(null);
     useEffect(() => {
         new Dygraph(graphEl.current, props.data, fullPresets);
