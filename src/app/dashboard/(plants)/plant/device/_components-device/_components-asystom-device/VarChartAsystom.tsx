@@ -44,8 +44,8 @@ function AsystomDevice({data, actualValue, unit, nameVariable, iconType}: any) {
                 </div>
                 
             </div>
-            <div className='w-full h-full bg-button-green-gradient rounded-2xl col-span-8 xl:col-span-7 pb-6'>
-                {data && <Graph data={data}  graphStyle={{ height: '350px' }} />}
+            <div className='w-full h-full bg-button-green-gradient rounded-2xl col-span-8 xl:col-span-7 pb-6 pr-6'>
+                {data && <Graph data={data}  graphStyle={{ height: '330px' }} />}
             </div>
         </div>
 
