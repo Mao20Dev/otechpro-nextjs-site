@@ -82,7 +82,17 @@ const config = {
         'subtitle':'text-3xl',
         'paragraph':'text-xl',
         'small':'text-sm',
-      }
+      },
+      screens: {
+        // Define a medida personalizada entre lg y xl
+        'big-xl': '1580px',
+      },
+      width: {
+        // Define las medidas personalizadas
+        '2/5': '40%',
+        '3/7': '42%',
+        '3/5': '60%',
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

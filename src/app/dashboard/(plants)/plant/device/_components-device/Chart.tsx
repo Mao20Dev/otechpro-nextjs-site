@@ -7,7 +7,7 @@ import "./dygraph.css";
 
 var graphStyle = {
     width: "100%",
-    height: 350
+    
 };
 
 var divStyle = {
@@ -135,7 +135,7 @@ export default function Graph(props: any) {
     return (
     <div >
         <h3 style={header}>{props.title || ""}</h3>
-        <div style={graphStyle} className={`graph-container ${props.id}`} ref={graphEl} />
+        <div style={{ ...graphStyle, ...props.graphStyle }} className={`graph-container ${props.id}`} ref={graphEl} />
     </div>
   );
 }
