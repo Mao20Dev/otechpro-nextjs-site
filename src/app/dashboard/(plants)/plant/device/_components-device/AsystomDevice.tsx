@@ -8,9 +8,10 @@ import {  useSearchParams } from 'next/navigation';
 import Specs from './_components-asystom-device/Specs';
 import VarChartAsystom from './_components-asystom-device/VarChartAsystom';
 
-import dynamicfrom from 'next/dynamic';
-const BarGraph = dynamicfrom(import('./BarChart'));
 
+import dynamic from 'next/dynamic';
+
+const BarGraph = dynamic(() => import('./BarChart'), { ssr: false });
 
 
 function formatData(timeArray: any, dataArray: any) {
