@@ -36,7 +36,7 @@ var cleanPresets = {
         drawAxis: false
     }
     },
-    rollPeriod: 7,
+    rollPeriod: 1,
     labelsDiv: "",
     highlightCircleSize: 2,
     strokeWidth: 2,
@@ -62,7 +62,7 @@ var fullPresets: any = {
         axisLineWidth: 1
     }
     },
-    rollPeriod: 10,
+    rollPeriod: 1,
     xAxisHeight: 50,
     resizable: 'both',
     digitsAfterDecimal: 4,
