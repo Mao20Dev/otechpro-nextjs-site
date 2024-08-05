@@ -617,29 +617,31 @@ function AsystomDevice() {
     
 
     React.useEffect(() => {
-        // Static data
+        // Llamadas iniciales
         fetchMachineId();
         fetchImage();
-        
-        
-
-        // Dynamic data
         fetchSpecData();
-        // skeleton for specs
         setTimeout(() => {
             setSpecsDataFlag(false);
         }, 1000);
         
-
-
         fetchAnomaly();
         fetchVibration();
         fetchRpm();
-
         setTimeout(() => {
             setDataFlag(false);
         }, 1000);
-        
+
+        // Configuración del intervalo para las llamadas dinámicas
+        const intervalId = setInterval(() => {
+            fetchSpecData();
+            fetchAnomaly();
+            fetchVibration();
+            fetchRpm();
+        }, 60000); // 60000 ms = 1 minuto
+
+        // Limpieza del intervalo al desmontar el componente
+        return () => clearInterval(intervalId);
     }, []);
 
 
@@ -712,7 +714,7 @@ function AsystomDevice() {
                     )}
                     </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+                <PopoverContent className="w-auto p-0" side='bottom' align="start">
                     <Calendar
                     initialFocus
                     mode="range"
