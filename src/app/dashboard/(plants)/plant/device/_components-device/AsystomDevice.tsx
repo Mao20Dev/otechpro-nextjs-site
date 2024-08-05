@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 
-import { ToastContainer, toast } from 'react-toastify';
+import toast, { Toaster } from 'react-hot-toast';
 import 'react-toastify/dist/ReactToastify.css';
 
 import {  useSearchParams } from 'next/navigation';
@@ -11,6 +11,7 @@ import VarChartAsystom from './_components-asystom-device/VarChartAsystom';
 
 import { Skeleton } from "@/components/ui/skeleton"
 import { CalendarIcon } from "@radix-ui/react-icons"
+
 
 import { addDays, format, subDays } from "date-fns"
 import { DateRange } from "react-day-picker"
@@ -107,6 +108,10 @@ function AsystomDevice() {
 
     const [date, setDate] = React.useState<DateRange | undefined>(undefined);
     const [prevDate, setPrevDate] = React.useState<DateRange | undefined>(undefined);
+
+    const [specsDataFlag, setSpecsDataFlag] = useState<boolean>(true);
+
+    const [dataFlag, setDataFlag] = useState<boolean>(true);
 
 
     const notify = () => toast.error("No se encontraron datos para el rango seleccionado");
@@ -556,6 +561,7 @@ function AsystomDevice() {
 
     
     const handlePopoverClose = async () => {
+        setDataFlag(true);
         if (date?.from && date?.to && (date.from !== prevDate?.from || date.to !== prevDate?.to)) {
             // Ajusta la fecha de inicio al comienzo del día (00:00:00)
             const startDate = format(date.from, "yyyy-MM-dd") + " 00:00:00";
@@ -605,6 +611,7 @@ function AsystomDevice() {
             fetchVibration();
             fetchRpm();
         }
+        setDataFlag(false);
     };
     
     
@@ -618,9 +625,20 @@ function AsystomDevice() {
 
         // Dynamic data
         fetchSpecData();
+        // skeleton for specs
+        setTimeout(() => {
+            setSpecsDataFlag(false);
+        }, 1000);
+        
+
+
         fetchAnomaly();
         fetchVibration();
         fetchRpm();
+
+        setTimeout(() => {
+            setDataFlag(false);
+        }, 1000);
         
     }, []);
 
@@ -633,8 +651,38 @@ function AsystomDevice() {
 
     return (
     <>
-        <ToastContainer />
-        <Specs imageUrl={imageUrl} temperature={Temperature} battery={Battery} functionM={machineId.process_function} piece={machineId.type} model={machineId.model} manufacturer={machineId.manufacturer} serial={mac} />
+        <Toaster 
+        toastOptions={{
+            className: 'text-md p-2 rounded-2xl width-[500px]',
+            style: {
+            background: '#713200',
+            border: '1px solid #713200',
+            padding: '16px',
+            color: '#e4e4e7',
+            },
+          }}
+
+        />
+        {specsDataFlag ?
+        <>
+            <div className='flex flex-row flex-wrap'>
+                <Skeleton className=" w-full sm:w-full md:w-full lg:w-2/3  xl:w-3/5 big-xl:w-1/3 h-[150px] rounded-2xl" />
+
+                <div className=' w-full  xl:w-full big-xl:w-3/7 grid grid-cols-1 lg:grid-cols-2 gap-2 mt-5 px-0 xl:px-0 big-xl:px-4 justify-center items-end'>
+                    <Skeleton className=" w-full xl:w-full big-xl:w-[100%] h-[60px] rounded-2xl" />
+                    <Skeleton className=" w-full xl:w-full big-xl:w-[100%] h-[60px] rounded-2xl mt-1" />
+                </div>
+            </div>
+        </> :
+        <>
+            <Specs imageUrl={imageUrl} temperature={Temperature} battery={Battery} functionM={machineId.process_function} piece={machineId.type} model={machineId.model} manufacturer={machineId.manufacturer} serial={mac} />
+        </>
+        
+    }
+        
+        
+
+
 
         <div className='w-full flex justify-center '>
             
@@ -678,56 +726,69 @@ function AsystomDevice() {
             </div>
         </div>
         
-
-        <div className='w-full grid grid-cols-8 h-auto bg-gray-800 rounded-2xl gap-1 mt-6'>
-            <div className='col-span-8 xl:col-span-6 p-2  rounded-2xl grid grid-cols-8 gap-1'>
-                <div className='col-span-8 xl:col-span-2 p-2 grid grid-cols-2 '>
-                    <div className='col-span-2 w-full flex justify-center text-zinc-200 text-md pb-1 pt-4'> Puntuación de anomalía</div>
-                    <div className='col-span-1 w-full flex flex-col justify-start items-center'>
+        {dataFlag ?
+        <>
+            <Skeleton className=" w-full  h-[550px] rounded-2xl" />
+            <Skeleton className=" w-full  h-[420px] rounded-2xl mt-3" />
+            <Skeleton className=" w-full  h-[420px] rounded-2xl mt-3" />
+            <Skeleton className=" w-full  h-[420px] rounded-2xl mt-3" />
+            <Skeleton className=" w-full  h-[420px] rounded-2xl mt-3" />
+            <Skeleton className=" w-full  h-[420px] rounded-2xl mt-3" />
+        </> :
+        <>
+            <div className='w-full grid grid-cols-8 h-auto bg-gray-800 rounded-2xl gap-1 mt-6'>
+                <div className='col-span-8 xl:col-span-6 p-2  rounded-2xl grid grid-cols-8 gap-1'>
+                    <div className='col-span-8 xl:col-span-2 p-2 grid grid-cols-2 '>
+                        <div className='col-span-2 w-full flex justify-center text-zinc-200 text-md pb-1 pt-4'> Puntuación de anomalía</div>
+                        <div className='col-span-1 w-full flex flex-col justify-start items-center'>
+                            <div className='text-zinc-200 text-md'>
+                                Tendencia
+                            </div>
+                            <div className={clsx(colorClassTrend, 'text-xl', 'font-bold')}>
+                                {trendActualValue} %
+                            </div> 
+                        </div>
+                        <div className='col-span-1 w-full flex flex-col justify-start items-center'>
+                            <div  className='text-zinc-200 text-md'>
+                                Actual
+                            </div>
+                            <div className={clsx(colorClass, 'text-xl', 'font-bold')}>
+                                {actualValueAnomaly} %
+                            </div> 
+                        </div>
+                    </div>
+                    <div className={clsx(bgClass,'col-span-8 xl:col-span-6 pt-6 pr-6 rounded-2xl w-full h-full')}>
+                        {anomalyData &&<BarGraph data={anomalyData}  title='' graphStyle={{ height: '180px' }} />}
+                    </div>
+                    <div className='col-span-8 p-2 flex flex-col '>
+                        <div className='text-green-700 text-lg font-bold'>
+                            El Asesor de Incidencias no ha detectado ninguna anomalía significativa.
+                        </div>
                         <div className='text-zinc-200 text-md'>
-                            Tendencia
+                            El Asesor de Incidencias le ayuda a detectar comportamientos anómalos de la máquina y le orienta sobre la naturaleza de las anomalías detectadas. Basándose en una zona de entrenamiento que refleja el estado normal de la máquina, el Asesor de incidencias realiza un seguimiento de las desviaciones con respecto a este estado nominal.
                         </div>
-                        <div className={clsx(colorClassTrend, 'text-xl', 'font-bold')}>
-                            {trendActualValue} %
-                        </div> 
-                    </div>
-                    <div className='col-span-1 w-full flex flex-col justify-start items-center'>
-                        <div  className='text-zinc-200 text-md'>
-                            Actual
-                        </div>
-                        <div className={clsx(colorClass, 'text-xl', 'font-bold')}>
-                            {actualValueAnomaly} %
-                        </div> 
                     </div>
                 </div>
-                <div className={clsx(bgClass,'col-span-8 xl:col-span-6 pt-6 pr-6 rounded-2xl w-full h-full')}>
-                    {anomalyData &&<BarGraph data={anomalyData}  title='' graphStyle={{ height: '180px' }} />}
-                </div>
-                <div className='col-span-8 p-2 flex flex-col '>
-                    <div className='text-green-700 text-lg font-bold'>
-                        El Asesor de Incidencias no ha detectado ninguna anomalía significativa.
-                    </div>
-                    <div className='text-zinc-200 text-md'>
-                        El Asesor de Incidencias le ayuda a detectar comportamientos anómalos de la máquina y le orienta sobre la naturaleza de las anomalías detectadas. Basándose en una zona de entrenamiento que refleja el estado normal de la máquina, el Asesor de incidencias realiza un seguimiento de las desviaciones con respecto a este estado nominal.
+                <div className={clsx(bgClass,'col-span-8 xl:col-span-2 p-2 rounded-2xl m-2 ')}>
+                    <div className='w-full h-[300px] rounded-2xl m-2'>
+                        <RadarChart barData={anomalyDataArray} />
                     </div>
                 </div>
             </div>
-            <div className={clsx(bgClass,'col-span-8 xl:col-span-2 p-2 rounded-2xl m-2 ')}>
-                <div className='w-full h-[300px] rounded-2xl m-2'>
-                    <RadarChart barData={anomalyDataArray} />
-                </div>
-            </div>
-        </div>
 
-        <VarChartAsystom data={anomalyData} actualValue={actualValueAnomaly} unit={'%'} nameVariable={'Puntaje de anomalia'} iconType={'vibration'} />
+            <VarChartAsystom data={anomalyData} actualValue={actualValueAnomaly} unit={'%'} nameVariable={'Puntaje de anomalia'} iconType={'vibration'} />
 
-        <VarChartAsystom data={vibrationData} actualValue={actualValueVibration} unit={'mm/s'} nameVariable={'Severidad de la vibración'} iconType={'speed'} />
+            <VarChartAsystom data={vibrationData} actualValue={actualValueVibration} unit={'mm/s'} nameVariable={'Severidad de la vibración'} iconType={'speed'} />
 
-        <VarChartAsystom data={rpmData} actualValue={actualValueRpm} unit={'rpm'} nameVariable={'Revoluciones por minuto'} iconType={'speed'} />
+            <VarChartAsystom data={rpmData} actualValue={actualValueRpm} unit={'rpm'} nameVariable={'Revoluciones por minuto'} iconType={'speed'} />
 
-        <VarChartAsystom data={temperatureSensor} actualValue={actualValueTemperatureSensor} unit={'°C'} nameVariable={'Temperatura sensor'} iconType={'temperature'} />
+            <VarChartAsystom data={temperatureSensor} actualValue={actualValueTemperatureSensor} unit={'°C'} nameVariable={'Temperatura sensor'} iconType={'temperature'} />
 
-        <VarChartAsystom data={ultrasonicData} actualValue={actualValueUltrasonic} unit={'dB'} nameVariable={'Nivel de ultrasonido'} iconType={'frequency'} />
+            <VarChartAsystom data={ultrasonicData} actualValue={actualValueUltrasonic} unit={'dB'} nameVariable={'Nivel de ultrasonido'} iconType={'frequency'} />
+            
+        </>}
+        
+
         
 
 
