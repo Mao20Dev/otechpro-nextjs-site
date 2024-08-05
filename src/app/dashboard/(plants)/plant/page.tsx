@@ -21,6 +21,7 @@ function Plant({}) {
     const id = param.get('id');  
     const name = param.get('name');
     const plantName = param.get('plantName');
+    const [searchTerm, setSearchTerm] = useState<string>('');
 
     const user = useUser();
 
@@ -61,11 +62,18 @@ function Plant({}) {
 
     console.log(filteredDevices);
 
-    const devices = filteredDevices?.map((device: any) => {
+    const filteredDevicesBySearch = filteredDevices.filter((device: any) => 
+        device.DeviceName?.toLowerCase().includes(searchTerm?.toLowerCase())
+    );
+    
+
+    const devices = filteredDevicesBySearch?.map((device: any) => {
         return (
             <Device device={device} company={name} idCompany={id} plantName={plantName} />
         )
     });
+
+    
 
     return (
     <>
@@ -77,7 +85,7 @@ function Plant({}) {
 
         {loading ? (
         <>
-            <Skeleton className="h-[525px] w-full rounded-xl" />
+            <Skeleton className="h-[325px] w-full rounded-xl" />
         
         </>
         ) : (
@@ -85,12 +93,18 @@ function Plant({}) {
             <div className="bg-gray-800 w-full lg:w-full h-auto rounded-2xl px-6 py-8 ">
                 <div className="w-full flex flex-row justify-between items-center mb-6">
                     <div className="text-md text-zinc-200 pt-4 md:pt-0 ">{plantName}</div>
-                    <Input  placeholder="Buscar dispositivo" type="search" className="w-3/4 sm:w-1/2 md:w-1/2 lg:w-1/4 text-sm" />
+                    <Input
+                        placeholder="Buscar dispositivo"
+                        type="search"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-3/4 sm:w-1/2 md:w-1/2 lg:w-1/4 text-sm"
+                    />
                 </div>
                 
                 <Separator classname='text-zinc-200 bg-zinc-200'  />
 
-                <div className="bg-gray-800 w-full  h-auto rounded-2xl px-6 py-8 grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4  ">
+                <div className="bg-gray-800 w-full  h-auto rounded-2xl px-6 py-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4  ">
                     {devices}
                 </div>
             </div>
