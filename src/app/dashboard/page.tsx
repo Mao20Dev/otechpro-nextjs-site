@@ -71,12 +71,12 @@ export default function  Home() {
     <>
       <div className="font-bold text-xl text-gray-800 pt-4 md:pt-0 mb-8">Principal</div>
       
-      <div className=" w-full h-auto rounded-lg grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8  ">
+      <div className=" w-full h-auto rounded-2xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8  ">
         {loading ? (
           <>
-            <Skeleton className="h-[155px] w-full rounded-xl" />
-            <Skeleton className="h-[155px] w-full rounded-xl" />
-            <Skeleton className="h-[155px] w-full rounded-xl" />
+            <Skeleton className="h-[285px] w-full rounded-xl" />
+            <Skeleton className="h-[285px] w-full rounded-xl" />
+            <Skeleton className="h-[285px] w-full rounded-xl" />
           </>
         ) : (
           <>
