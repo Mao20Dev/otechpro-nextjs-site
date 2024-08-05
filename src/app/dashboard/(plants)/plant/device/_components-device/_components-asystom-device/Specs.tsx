@@ -4,7 +4,7 @@ import { CldImage } from 'next-cloudinary';
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-function Specs({imageUrl, temperature, battery}: any) {
+function Specs({imageUrl, temperature, battery, functionM, piece,model,manufacturer,serial}: any) {
     return (
         <div className='flex flex-row flex-wrap'>
             <div className=' w-full sm:w-full md:w-full lg:w-2/3  xl:w-3/5 big-xl:w-1/3 h-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-2 bg-gray-800 rounded-2xl justify-start items-end'>
@@ -25,23 +25,23 @@ function Specs({imageUrl, temperature, battery}: any) {
                 <div className='flex flex-col pt-2 pb-4 xl:pb-2 pl-4 lg:pl-4 lg:pt-3 justify-start items-start w-full h-full'>
                     <div className='flex flex-row text-sm '>
                         <p className='text-zinc-200 font-bold leading-5'>Funcion:</p>
-                        <div className='text-muted text-xs ml-2 leading-5'>Other</div>
+                        <div className='text-muted text-xs ml-2 leading-5'>{functionM}</div>
                     </div>
                     <div className='flex flex-row text-sm  '>
                         <p className='text-zinc-200 font-bold leading-5'>Pieza:</p>
-                        <div className='text-muted text-xs ml-2 leading-5'>Compresor</div>
+                        <div className='text-muted text-xs ml-2 leading-5'>{piece}</div>
                     </div>
                     <div className='flex flex-row text-sm '>
                         <p className='text-zinc-200 font-bold leading-5'>Modelo:</p>
-                        <div className='text-muted text-xs ml-2 leading-5'>Modelo 2</div>
+                        <div className='text-muted text-xs ml-2 leading-5'>{model}</div>
                     </div>
                     <div className='flex flex-row text-sm '>
                         <p className='text-zinc-200 font-bold leading-5'>Fabricante:</p>
-                        <div className='text-muted text-xs ml-2 leading-5'>cummis</div>
+                        <div className='text-muted text-xs ml-2 leading-5'>{manufacturer}</div>
                     </div>
                     <div className='flex flex-row text-sm '>
                         <p className='text-zinc-200 font-bold leading-5'>Serial:</p>
-                        <div className='text-muted text-xs ml-2 leading-5'>1234567890</div>
+                        <div className='text-muted text-xs ml-2 leading-5'>{serial}</div>
                     </div>
                 </div>
             </div>
