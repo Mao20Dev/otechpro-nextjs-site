@@ -106,12 +106,14 @@ function AsystomDevice() {
 
     const [machineId, setMachineId] = useState<any>({});
 
-    const [date, setDate] = React.useState<DateRange | undefined>(undefined);
-    const [prevDate, setPrevDate] = React.useState<DateRange | undefined>(undefined);
+    const [date, setDate] = React.useState<any>(null);
+    const [prevDate, setPrevDate] = React.useState<any>(null);
 
     const [specsDataFlag, setSpecsDataFlag] = useState<boolean>(true);
 
     const [dataFlag, setDataFlag] = useState<boolean>(true);
+
+    const [intervalId, setIntervalId] = useState<any>(null);
 
 
     const notify = () => toast.error("No se encontraron datos para el rango seleccionado");
@@ -624,30 +626,38 @@ function AsystomDevice() {
         setTimeout(() => {
             setSpecsDataFlag(false);
         }, 1000);
-        
+    
         fetchAnomaly();
         fetchVibration();
         fetchRpm();
         setTimeout(() => {
             setDataFlag(false);
         }, 1000);
-
-        // Configuración del intervalo para las llamadas dinámicas
-        const intervalId = setInterval(() => {
-            fetchSpecData();
-            fetchAnomaly();
-            fetchVibration();
-            fetchRpm();
-        }, 60000); // 60000 ms = 1 minuto
-
-        // Limpieza del intervalo al desmontar el componente
-        return () => clearInterval(intervalId);
-    }, []);
-
+    
+        // Configura el intervalo si no hay fecha seleccionada
+        if (!date) {
+            const id = setInterval(() => {
+                fetchSpecData();
+                fetchAnomaly();
+                fetchVibration();
+                fetchRpm();
+                console.log("intervalo ejecutado");
+            }, 60000); // 60000 ms = 1 minuto
+    
+            setIntervalId(id);
+    
+            // Limpieza del intervalo al desmontar el componente
+            return () => clearInterval(id);
+        }
+    
+    }, [date]);
 
     React.useEffect(() => {
-       console.log(date);
-    }, [date]);
+        if (date && intervalId) {
+            clearInterval(intervalId);
+            setIntervalId(null);
+        }
+    }, [date, intervalId]);
     
     console.log(anomalyData);
 
