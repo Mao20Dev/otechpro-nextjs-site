@@ -1,5 +1,3 @@
-'use client';
-
 import React, { useEffect, useRef } from "react";
 import Dygraph from "dygraphs";
 
@@ -10,12 +8,13 @@ var graphStyle = {
 };
 
 var divStyle = {
-    border: "1px solid #c8c8c8",
-    padding: "1rem 2rem 2rem 0",
+    
+    
     boxSizing: "border-box",
-    margin: "1rem",
+    disableZoom: true, // Desactiva el zoom en el gráfico
     borderRadius: "4px",
-    overflow: 'visible'
+    overflow: 'visible',
+    pointerEvents: 'auto', // Desactiva la interacción del usuario
 };
 
 var header = {
@@ -50,7 +49,8 @@ var fullPresets: any = {
             drawGrid: false,
             drawAxis: true,
             axisLineColor: "white",
-            axisLineWidth: 1.5
+            axisLineWidth: 1.5,
+            disableZoom: true // Desactiva el zoom en el gráfico
         },
         y: {
             drawAxis: true,
@@ -58,7 +58,8 @@ var fullPresets: any = {
             gridLineColor: "#eee",
             gridLinePattern: [5, 5],
             axisLineColor: "white",
-            axisLineWidth: 1
+            axisLineWidth: 1,
+            disableZoom: true // Desactiva el zoom en el gráfico
         }
     },
     rollPeriod: 1,
@@ -91,9 +92,23 @@ var fullPresets: any = {
             strokeColor: 'rgb(212, 212, 216)',
             strokeOpacity: 0.8,
             strokePattern: [10, 2],
+            disableZoom: true // Desactiva el zoom en el gráfico
         },
     },
-    plotter: barChartPlotter // Integrar el plotter de barras personalizado
+    plotter: barChartPlotter, // Integrar el plotter de barras personalizado
+    disableZoom: true, // Desactiva el zoom en el gráfico
+    zoomCallback: function () {},
+    drawCallback: function() {},
+    panCallback: function() {
+        // Prevent panning (moving)
+    },
+    isZoomed: function() {
+        return false;
+        // Return false to disable zooming
+        // Return true to enable zooming
+      },
+    
+
 };
 
 function legendFormatter(data: any) {
@@ -149,11 +164,12 @@ export default function BarChart(props: any) {
     const graphEl: any = useRef(null);
     useEffect(() => {
         new Dygraph(graphEl.current, props.data, fullPresets);
-    });
+    }, [props.data]); // Asegúrate de que el gráfico se actualice si los datos cambian
+
     return (
         <div >
             <h3 style={header}>{props.title || ""}</h3>
-            <div style={{ ...graphStyle, ...props.graphStyle }} className={`graph-container ${props.id}`} ref={graphEl} />
+            <div style={{ ...graphStyle, ...divStyle, ...props.graphStyle }} className={`graph-container ${props.id}`} ref={graphEl} />
         </div>
     );
 }
