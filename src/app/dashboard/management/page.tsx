@@ -26,6 +26,8 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { CldImage } from 'next-cloudinary';
+import { Skeleton } from '@/components/ui/skeleton';
+
 
 const ManagementPage = () => {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
@@ -39,6 +41,7 @@ const ManagementPage = () => {
   const [imageUrl, setImageUrl] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDialogOpen2, setIsDialogOpen2] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const handleDelete = async () => {
     if (selectedItems.length === 1) {
@@ -253,6 +256,9 @@ const handleEditClick = () => {
 
   useEffect(() => {
     fetchCompanies();
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
   }, []);
 
   const tableElements = filteredCompanies.map((company: any) => {
@@ -304,6 +310,20 @@ const handleEditClick = () => {
     <>
       <span className="font-bold text-xl text-gray-800 pt-4 md:pt-0">Empresas</span>
 
+      {loading ?
+      <>
+      <div className="w-full h-auto rounded-2xl pt-4 px-4">
+        <div className='grid grid-cols-6 md:grid-cols-6 lg:grid-cols-6 xl:grid-cols-6 gap-7 p-0 pt-4 sm:p-4 lg:p-12 lg:pt-4'>
+        <Skeleton className="h-[35px] w-full col-span-6 xl:col-span-4" />
+        <Skeleton className="h-[35px] col-span-2 xl:col-span-1 w-full" />
+        <Skeleton className="h-[35px] col-span-2 xl:col-span-1 w-full" />
+        </div>
+      </div>
+      <div className="w-full h-auto rounded-2xl px-12">
+      <Skeleton className="h-[550px] w-full " />
+      </div>
+      </> :<>
+      
       <div className="w-full h-auto rounded-2xl p-4">
         <div className='grid grid-cols-6 md:grid-cols-6 lg:grid-cols-6 xl:grid-cols-6 gap-7 p-0 pt-4 sm:p-4 lg:p-12 lg:pt-4'>
           <Input placeholder='Buscar por nombre de empresa' className='w-full col-span-6 xl:col-span-4' value={searchTerm} onChange={handleSearchChange} />
@@ -449,7 +469,7 @@ const handleEditClick = () => {
               <DialogHeader>
                 <DialogTitle>Eliminar empresa</DialogTitle>
                 <DialogDescription>
-                  Estas seguro que quieres eliminar esta empresa?
+                ¿Estas seguro que quieres eliminar esta empresa?
                 </DialogDescription>
               </DialogHeader>
               
@@ -480,6 +500,9 @@ const handleEditClick = () => {
           </Table>
         </div>
       </div>
+      </>}
+
+      
     </>
   );
 };
