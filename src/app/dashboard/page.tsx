@@ -80,9 +80,9 @@ export default function  Home() {
             <Skeleton className="h-[285px] w-full rounded-xl" />
           </>
         ) : (
-          <>
+          <div className="col-span-1 sm:col-span-2 lg:col-span-3 xl:col-span-4 flex justify-center lg:justify-start items-center flex-wrap">
             <CompanyCards company={fullUserData?.User.Companies} />
-          </>
+          </div>
           
         )}
           
