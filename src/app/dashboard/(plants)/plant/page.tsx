@@ -89,8 +89,8 @@ function Plant({}) {
         
         </>
         ) : (
-        <>
-            <div className="bg-gray-800 w-full lg:w-full h-auto rounded-2xl px-6 py-8 ">
+        <div className="w-full flex justify-start items-center">
+            <div className="bg-gray-800 max-w-[1200px] w-full lg:w-full h-auto rounded-2xl px-6 py-8 ">
                 <div className="w-full flex flex-row justify-between items-center mb-6">
                     <div className="text-md text-zinc-200 pt-4 md:pt-0 ">{plantName}</div>
                     <Input
@@ -108,7 +108,7 @@ function Plant({}) {
                     {devices}
                 </div>
             </div>
-        </>
+        </div>
         )}
 
         
