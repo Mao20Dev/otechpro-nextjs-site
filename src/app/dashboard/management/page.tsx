@@ -3,6 +3,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import React, { useState, useEffect } from 'react';
 import { Switch } from "@/components/ui/switch"
+import { Separator } from "@/components/ui/separator"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -27,6 +28,9 @@ import {
 import { Label } from "@/components/ui/label"
 import { CldImage } from 'next-cloudinary';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
+
 
 
 const ManagementPage = () => {
@@ -35,13 +39,33 @@ const ManagementPage = () => {
   const [filteredCompanies, setFilteredCompanies] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCompany, setSelectedCompany] = useState<any>(null);
+  const [selectedCompany2, setSelectedCompany2] = useState<any>(null);
   const [selectedCompanyDevices, setSelectedCompanyDevices] = useState<any[]>([]);
   const [showDevices, setShowDevices] = useState(false);
   const [originalCompany, setOriginalCompany] = useState<any>(null); // Estado para los valores originales
   const [imageUrl, setImageUrl] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDialogOpen2, setIsDialogOpen2] = useState(false);
+  const [isDialogOpen3, setIsDialogOpen3] = useState(false);
+  const [newCompanyName, setNewCompanyName] = useState('');
+  const [newPlantName, setNewPlantName] = useState('');
+  const [newDeviceName, setNewDeviceName] = useState('');
+  const [newDeviceMAC, setNewDeviceMAC] = useState('');
+  const [selectedPlant, setSelectedPlant] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [newCompanyImageURL, setNewCompanyImageURL] = useState('');
+  const [newDeviceImageURL, setNewDeviceImageURL] = useState('');
+  
+  const [newDeviceNamePlant, setNewDeviceNamePlant] = useState('');
+  const [newDeviceMACPlant, setNewDeviceMACPlant] = useState(''); 
+  const [newDeviceImageURLPLANT, setNewDeviceImageURLPLANT] = useState('');
+
+  const [newPlantName2, setNewPlantName2] = useState('');
+  const [newDeviceName2, setNewDeviceName2] = useState('');
+  const [newDeviceMAC2, setNewDeviceMAC2] = useState('');
+  const [newDeviceImageURL2, setNewDeviceImageURL2] = useState('');
+
+  
 
   const handleDelete = async () => {
     if (selectedItems.length === 1) {
@@ -119,6 +143,42 @@ const ManagementPage = () => {
         console.log(url);
         setImageUrl(url);
     }
+};
+
+const handleImageCompanyUpload = async (event: any) => {
+  const file = event.target.files[0];
+  if (file) {
+      const url = await uploadImage(file);
+      console.log(url);
+      setNewCompanyImageURL(url);
+  }
+};
+
+const handleImageDeviceUpload = async (event: any) => {  
+  const file = event.target.files[0];
+  if (file) {
+      const url = await uploadImage(file);
+      console.log(url);
+      setNewDeviceImageURL(url);
+  }
+};
+
+const handleImageDeviceUploadPlant = async (event: any) => {  
+  const file = event.target.files[0];
+  if (file) {
+      const url = await uploadImage(file);
+      console.log(url);
+      setNewDeviceImageURLPLANT(url);
+  }
+};
+
+const handleImageDeviceUploadPlant2 = async (event: any) => {  
+  const file = event.target.files[0];
+  if (file) {
+      const url = await uploadImage(file);
+      console.log(url);
+      setNewDeviceImageURL2(url);
+  }
 };
 
 const handleDeviceImageUpload = async (event: any, deviceID: string) => {
@@ -254,6 +314,68 @@ const handleEditClick = () => {
 
   // console.log("Empresa seleccionada", selectedItems);
 
+
+  const handleSaveDevice = async () => {
+    const requestBody: { [key: string]: any } = {
+      companyName: selectedCompany2 === 'new' ? newCompanyName : selectedCompany2.CompanyName,
+      plantName: selectedCompany2 === 'new' ? newPlantName : selectedPlant.PlantName,
+    };
+  
+    // Conditionally add properties if they have values
+    if (newDeviceName.length > 0) {
+      requestBody.deviceName = newDeviceName;
+    }
+    if (newDeviceMAC.length > 0) {
+      requestBody.MAC = newDeviceMAC;
+    }
+    if (newCompanyImageURL && newCompanyImageURL.length > 0) {
+      requestBody.companyImageURL = newCompanyImageURL;
+    }
+    if (newDeviceImageURL && newDeviceImageURL.length > 0) {
+      requestBody.deviceImageURL = newDeviceImageURL;
+    }
+
+    // Conditionally add properties if they have values
+    if (newDeviceNamePlant.length > 0) {
+      requestBody.deviceName = newDeviceNamePlant;
+    }
+    if (newDeviceMACPlant.length > 0) {
+      requestBody.MAC = newDeviceMACPlant;
+    }
+    if (newDeviceImageURLPLANT && newDeviceImageURLPLANT.length > 0) {
+      requestBody.deviceImageURL = newDeviceImageURLPLANT;
+    }
+
+    // Conditionally add properties if they have values
+    if (newPlantName2.length > 0) {
+      requestBody.plantName = newPlantName2;
+    }
+    if (newDeviceName2.length > 0) {
+      requestBody.deviceName = newDeviceName2;
+    }
+    if (newDeviceMAC2.length > 0) {
+      requestBody.MAC = newDeviceMAC2;
+    }
+    if (newDeviceImageURL2 && newDeviceImageURL2.length > 0) {
+      requestBody.deviceImageURL = newDeviceImageURL2;
+    }
+  
+    console.log("requestBody", requestBody);
+  
+    // Call API to save device
+    await fetch('https://erokmgq6y9.execute-api.us-east-2.amazonaws.com/prod/company', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestBody)
+    });
+  
+    // Close dialog and refresh data
+    setIsDialogOpen3(false);
+    fetchCompanies();
+  };
+
   useEffect(() => {
     fetchCompanies();
     setTimeout(() => {
@@ -286,12 +408,12 @@ const handleEditClick = () => {
         <TableCell className="py-2 px-4 border-b text-center">
           <Checkbox checked={selectedItems.includes(company.CompanyID)} onCheckedChange={() => handleCheckboxChange(company.CompanyID)} />
         </TableCell>
-        <TableCell className="py-2 px-4 border-b">{company.CompanyName}</TableCell>
-        <TableCell className="py-2 px-4 border-b">{plantsElements}</TableCell>
-        <TableCell className="py-2 px-4 border-b">
+        <TableCell className="py-2 px-4 border-b border-gray-300">{company.CompanyName}</TableCell>
+        <TableCell className="py-2 px-4 border-b border-gray-300">{plantsElements}</TableCell>
+        <TableCell className="py-2 px-4 border-b border-gray-300">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost">. . .</Button>
+              <Button variant="custom">Ver</Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">
               <DropdownMenuGroup>
@@ -304,7 +426,36 @@ const handleEditClick = () => {
     );
   });
 
-  // console.log("selectedCompany", selectedCompany);
+  const handleAddDevice = async () => {
+    setNewDeviceName2('');
+    setNewDeviceMAC2('');
+    setNewDeviceImageURL2('');
+    setNewPlantName2('');
+
+
+    setSelectedCompany2(null);
+    setSelectedPlant(null);
+    setNewDeviceNamePlant('');
+    setNewDeviceMACPlant('');
+    setNewDeviceImageURLPLANT('');
+  
+    setSelectedCompany2(null);
+    setNewCompanyName('');
+    setNewPlantName('');
+    setNewDeviceName('');
+    setNewDeviceMAC('');
+    setImageUrl('');
+  }
+
+  console.log("selectedCompany", selectedCompany);
+  console.log("selectedCompany2", selectedCompany2);
+
+  console.log("selectedPlant", selectedPlant);
+
+  console.log("newcompany", newCompanyName);
+  console.log("newplant", newPlantName);
+    console.log("newdevice", newDeviceName);
+    console.log("newdevicemac", newDeviceMAC);
 
   return (
     <>
@@ -314,19 +465,23 @@ const handleEditClick = () => {
       <>
       <div className="w-full h-auto rounded-2xl pt-4 px-4">
         <div className='grid grid-cols-6 md:grid-cols-6 lg:grid-cols-6 xl:grid-cols-6 gap-7 p-0 pt-4 sm:p-4 lg:p-12 lg:pt-4'>
-        <Skeleton className="h-[35px] w-full col-span-6 xl:col-span-4" />
+        <Skeleton className="h-[35px] w-full col-span-6 xl:col-span-3" />
+        <Skeleton className="h-[35px] col-span-2 xl:col-span-1 w-full" />
         <Skeleton className="h-[35px] col-span-2 xl:col-span-1 w-full" />
         <Skeleton className="h-[35px] col-span-2 xl:col-span-1 w-full" />
         </div>
       </div>
-      <div className="w-full h-auto rounded-2xl px-12">
+      <div className="w-full h-auto rounded-2xl px-16">
       <Skeleton className="h-[550px] w-full " />
       </div>
       </> :<>
       
       <div className="w-full h-auto rounded-2xl p-4">
+
+
         <div className='grid grid-cols-6 md:grid-cols-6 lg:grid-cols-6 xl:grid-cols-6 gap-7 p-0 pt-4 sm:p-4 lg:p-12 lg:pt-4'>
-          <Input placeholder='Buscar por nombre de empresa' className='w-full col-span-6 xl:col-span-4' value={searchTerm} onChange={handleSearchChange} />
+          <Input placeholder='Buscar por nombre de empresa' 
+          className='w-full col-span-6 xl:col-span-3' value={searchTerm} onChange={handleSearchChange} />
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button 
@@ -339,7 +494,7 @@ const handleEditClick = () => {
               Editar
             </Button> 
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[425px] max-h-screen overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Editar empresa</DialogTitle>
                 <DialogDescription>
@@ -404,8 +559,8 @@ const handleEditClick = () => {
                 </div>
                 
                 {showDevices && selectedCompanyDevices.map((device: any, index: number) => (
-                    <div key={device.DeviceID} className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor={`device-${device.DeviceID}`} className="text-right">
+                    <div key={device.DeviceID} className="grid grid-cols-4 items-center gap-4 ">
+                      <Label htmlFor={`device-${device.DeviceID}`} className="text-right ">
                         Equipo {index + 1}
                       </Label>
                       <Input
@@ -439,6 +594,7 @@ const handleEditClick = () => {
                           />
                         </>
                       )}
+                      <Separator className="my-0 col-span-4" />
                     </div>
                   ))}
 
@@ -480,8 +636,252 @@ const handleEditClick = () => {
               </DialogFooter>
             </DialogContent>
           </Dialog>
+
+          
+          <Dialog open={isDialogOpen3} onOpenChange={setIsDialogOpen3}>
+            <DialogTrigger asChild>
+              <Button 
+              variant={selectedItems.length === 1 ? "customUnable" : "custom"}  
+              className='col-span-2  xl:col-span-1'
+              disabled={selectedItems.length === 1}
+              onClick={handleAddDevice}>
+                <Icon icon="lucide:plus" width="22" height="22" className="text-zinc-200 mr-2" />
+                Agregar 
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Agregar Dispositivo</DialogTitle>
+                <DialogDescription>
+                  Agrega un nuevo dispositivo o selecciona una empresa/planta existente.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div>
+                  <Label htmlFor="companySelect" className="text-right ">Empresa</Label>
+                  <Select
+                  
+                    onValueChange={(value) => {
+                      const company = companies.find((c: any) => c.CompanyID === value);
+                      if(company){
+                        setSelectedCompany2(company);
+                      }else{
+                        setSelectedCompany2(value);
+                      }
+                      
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue>
+                        {selectedCompany2 ? selectedCompany2.CompanyName : 'Seleccionar empresa'}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {companies.map((company) => (
+                        <SelectItem key={company.CompanyID} value={company.CompanyID}>
+                          {company.CompanyName}
+                        </SelectItem>
+                      ))}
+                      <SelectItem value="new">Crear nueva empresa</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                {selectedCompany2 === 'new' && (
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="newCompanyName" className="text-right">Nombre de Empresa</Label>
+                    <Input
+                      id="newCompanyName"
+                      value={newCompanyName}
+                      onChange={(e) => setNewCompanyName(e.target.value)}
+                      className="col-span-3"
+                    />
+                  </div>
+                )}
+                {selectedCompany2 === 'new' &&<div className="grid grid-cols-4 items-center gap-4">
+                  {imageUrl && <CldImage src={imageUrl} width="80" height="80" alt="Device Image" />}
+                  <Label htmlFor="deviceImage" className="text-right">Imagen de empresa</Label>
+                  <Input
+                    id="deviceImage"
+                    type="file"
+                    onChange={handleImageCompanyUpload}
+                    className="col-span-3"
+                  />
+                  
+                </div>}
+
+                {selectedCompany2 === 'new' && (
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="newCompanyName" className="text-right">Nombre de la planta</Label>
+                    <Input
+                      id="newPlantName"
+                      value={newPlantName}
+                      onChange={(e) => setNewPlantName(e.target.value)}
+                      className="col-span-3"
+                    />
+                  </div>
+                )}
+                {selectedCompany2 === 'new' && (
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="newCompanyName" className="text-right">Nombre del dispositivo</Label>
+                    <Input
+                      id="newPlantName"
+                      value={newDeviceName}
+                      onChange={(e) => setNewDeviceName(e.target.value)}
+                      className="col-span-3"
+                    />
+                  </div>
+                )}
+                {selectedCompany2 === 'new' &&<div className="grid grid-cols-4 items-center gap-4">
+                  {imageUrl && <CldImage src={imageUrl} width="80" height="80" alt="Device Image" />}
+                  <Label htmlFor="deviceImage" className="text-right">Imagen de dispositivo</Label>
+                  <Input
+                    id="deviceImage"
+                    type="file"
+                    onChange={handleImageDeviceUpload}
+                    className="col-span-3"
+                  />
+                  
+                </div>}
+                {selectedCompany2 === 'new' && (
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="newCompanyName" className="text-right">MAC</Label>
+                    <Input
+                      id="newPlantName"
+                      value={newDeviceMAC}
+                      onChange={(e) => setNewDeviceMAC(e.target.value)}
+                      className="col-span-3"
+                    />
+                  </div>
+                )}
+
+                {/* si la planta existe, crea un nuevo dispositivo con el nombre del dispositivo y el mac del dispositivo para la nueva planta */}
+
+                {selectedCompany2 !== 'new' && selectedCompany2 && <div >
+                  <Label htmlFor="plantSelect" className="text-right">Planta</Label>
+                  <Select
+                    
+                    onValueChange={(value) => {
+                      const plant = selectedCompany2.Plants.find((p: any) => p.PlantID === value);
+                      if(plant){
+                        setSelectedPlant(plant);
+                      }else{
+                        setSelectedPlant(value);
+                      }
+                      
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue>
+                        {selectedPlant ? selectedPlant.PlantName : 'Seleccionar planta'}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                    {selectedCompany2?.Plants.map((plant: any) => (
+                      <SelectItem key={plant.PlantID} value={plant.PlantID}>
+                        {plant.PlantName}
+                      </SelectItem>
+                    ))}
+                    <SelectItem value="newPlant">Crear nueva planta</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>}
+
+                {selectedPlant !== null && selectedPlant !== "newPlant"  && 
+                <div className="">
+                  <Label htmlFor="newCompanyName" className="text-right">Nombre del dispositivo</Label>
+                  <Input
+                    id="newPlantName"
+                    value={newDeviceNamePlant}
+                    onChange={(e) => setNewDeviceNamePlant(e.target.value)}
+                    className="col-span-3"
+                  />
+                </div>}
+
+                {selectedPlant !== null && selectedPlant !== "newPlant"  && 
+                <div className="">
+                  <Label htmlFor="deviceImage" className="text-right">Imagen de dispositivo</Label>
+                    <Input
+                      id="deviceImage"
+                      type="file"
+                      onChange={handleImageDeviceUploadPlant}
+                      className="col-span-3"
+                    />
+                  </div>}
+
+                {selectedPlant !== null && selectedPlant !== "newPlant"  && 
+                <div className="">
+                  <Label htmlFor="newCompanyName" className="text-right">MAC</Label>
+                  <Input
+                    id="newPlantName"
+                    value={newDeviceMACPlant}
+                    onChange={(e) => setNewDeviceMACPlant(e.target.value)}
+                    className="col-span-3"
+                  />
+                </div>}
+
+
+
+                {/* si hay nueva planta, muestra para poner el nombre de la planta y el nombre del dispositivo */}
+
+
+
+                {selectedPlant === 'newPlant' && (
+                  <div className="">
+                    <Label htmlFor="newPlantName" className="text-right">Nombre de Planta</Label>
+                    <Input
+                      id="newPlantName"
+                      value={newPlantName2}
+                      onChange={(e) => setNewPlantName2(e.target.value)}
+                      className="col-span-3"
+                    />
+                  </div>
+                )}
+
+              {selectedPlant === 'newPlant' && (
+                  <div className="">
+                    <Label htmlFor="newPlantName" className="text-right">Nombre del dispositivo</Label>
+                    <Input
+                      id="newPlantName"
+                      value={newDeviceName2}
+                      onChange={(e) => setNewDeviceName2(e.target.value)}
+                      className="col-span-3"
+                    />
+                  </div>
+                )}
+
+                {selectedPlant === 'newPlant' && 
+                <div className="">
+                  <Label htmlFor="deviceImage" className="text-right">Imagen de dispositivo</Label>
+                    <Input
+                      id="deviceImage"
+                      type="file"
+                      onChange={handleImageDeviceUploadPlant2}
+                      className="col-span-3"
+                    />
+                  </div>}
+                {selectedPlant === 'newPlant' && (
+                  <div className="">
+                    <Label htmlFor="newPlantName" className="text-right">MAC</Label>
+                    <Input
+                      id="newPlantName"
+                      value={newDeviceMAC2}
+                      onChange={(e) => setNewDeviceMAC2(e.target.value)}
+                      className="col-span-3"
+                    />
+                  </div>
+                )}
+                
+              </div>
+              <DialogFooter>
+                <Button type="button" onClick={handleSaveDevice}>Guardar Dispositivo</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+          
+          
           
         </div>
+        
         
         {/* Tabla de datos */}
         <div className='w-full h-auto rounded-2xl p-0 pt-2 sm:p-4 lg:p-12 mt-2 lg:pt-2 '>
@@ -489,9 +889,9 @@ const handleEditClick = () => {
             <TableHeader>
               <TableRow>
                 <TableHead className="py-2 flex justify-center items-center border-b">Seleccionar</TableHead>
-                <TableHead className="py-2 px-4 border-b">Empresa</TableHead>
-                <TableHead className="py-2 px-4 border-b">Plantas</TableHead>
-                <TableHead className="py-2 px-4 border-b">Dispositivos</TableHead>
+                <TableHead className="py-2 px-4 border-b border-gray-300">Empresa</TableHead>
+                <TableHead className="py-2 px-4 border-b border-gray-300">Plantas</TableHead>
+                <TableHead className="py-2 px-4 border-b border-gray-300">Dispositivos</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -499,6 +899,8 @@ const handleEditClick = () => {
             </TableBody>
           </Table>
         </div>
+
+        
       </div>
       </>}
 
