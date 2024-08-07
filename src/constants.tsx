@@ -21,7 +21,7 @@ export const SIDENAV_ITEMS: SideNavItem[] = [
     subMenuItems: [
       { title: 'Empresas', path: '/dashboard/management' },
       { title: 'Usuarios', path: '/dashboard/management/users' },
-      { title: 'Agregar equipo', path: '/dashboard/management/newDevice' },
+      // { title: 'Agregar equipo', path: '/dashboard/management/newDevice' },
     ],
   },
   

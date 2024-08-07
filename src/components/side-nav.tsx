@@ -1,6 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
+
+import { useUser } from "@clerk/nextjs";
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -12,6 +14,35 @@ import Image from 'next/image'
 import logo from '../assets/mainlogo.png';
 
 const SideNav = () => {
+  const [users, setUsers] = useState<any[]>([]);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const user = useUser();
+
+  const fetchUsers = async () => {
+    const response = await fetch('https://erokmgq6y9.execute-api.us-east-2.amazonaws.com/prod/users'); // Reemplaza con tu URL de API de usuarios
+    const data = await response.json();
+    console.log("Users in management page", data);
+    setUsers(data);
+    
+  };
+  useEffect(() => {
+    fetchUsers();
+    
+    
+  }, []);
+
+  useEffect(() => {
+    if (user?.user?.id) {
+      const currentUser = users.find(u => u.UserID === user.user.id);
+      if (currentUser && currentUser.Roles.includes('admin')) {
+        setIsAdmin(true);
+        console.log("user is admin", currentUser);
+      } else {
+        setIsAdmin(false);
+      }
+    }
+  }, [user?.user?.id, users]);
+  
   return (
     <div className="md:w-60 bg-gray-800 h-screen flex-1 fixed border-r border-zinc-200 hidden md:flex">
       <div className="flex flex-col space-y-6 w-full">
@@ -24,6 +55,10 @@ const SideNav = () => {
 
         <div className="flex flex-col space-y-2  md:px-4 ">
           {SIDENAV_ITEMS.map((item, idx) => {
+            if (item.path === '/dashboard/management' && !isAdmin) {
+              return null;
+            }
+
             return <MenuItem key={idx} item={item} />;
           })}
         </div>

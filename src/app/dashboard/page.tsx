@@ -52,7 +52,8 @@ export default function  Home() {
           } else {
             const responseData = await response.json();
             setFullUserData(responseData);
-            console.log(responseData);
+            console.log("informacion del usuario si tiene algo de información", responseData);
+            console.log("cuantas companias tiene lucianito?",responseData?.User?.Companies);
             setLoading(false);
           }
         } catch (error) {

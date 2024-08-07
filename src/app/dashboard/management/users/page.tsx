@@ -99,6 +99,7 @@ const UserManagementPage = () => {
 
   const handleEditClick = () => {
     setIsDialogOpen(true); // Abrir el diálogo
+    setSelectedPlants([]);
     if (selectedItems.length === 1) {
       const user = users.find((user: any) => user.UserID === selectedItems[0]);
       setSelectedUser(user);
@@ -151,30 +152,59 @@ const UserManagementPage = () => {
   }, []);
 
   const tableElements = filteredUsers.map((user: any) => (
-    <TableRow key={user.UserID} className='h-12'>
-      <TableCell className="py-2 px-4 border-b text-center">
-        <Checkbox checked={selectedItems.includes(user.UserID)} onCheckedChange={() => handleCheckboxChange(user.UserID)} />
+    <TableRow key={user.UserID} className='h-8 border-b border-gray-200'>
+      <TableCell className="  text-center border-b border-gray-200 ">
+        <Checkbox  checked={selectedItems.includes(user.UserID)} onCheckedChange={() => handleCheckboxChange(user.UserID)} />
       </TableCell>
-      <TableCell>{user.Name}</TableCell>
-      <TableCell>{user.Email}</TableCell>
-      <TableCell>{user.Roles}</TableCell>
-      <TableCell>
-        {user.Companies.map((company: any) => (
-          <div key={company.CompanyID}>
-            {company.CompanyName}
-          </div>
-        ))}
+      <TableCell className='border-b border-gray-300'>{user.Name}</TableCell>
+      <TableCell className='border-b border-gray-300'>{user.Email}</TableCell>
+      
+      <TableCell className='border-b border-gray-300'>
+        {user.Companies && user.Companies.length > 0 ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="custom">Ver</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56">
+              <DropdownMenuGroup>
+                {user.Companies.map((company: any) => (
+                  <div key={company.CompanyID}>
+                    {company.CompanyName}
+                  </div>
+                ))}
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <div className=""></div> 
+        )}
+
       </TableCell>
-      <TableCell>
-        {user.Companies.map((company: any) => (
-          <div key={company.CompanyID}>
-            {company.Plants.map((plant: any) => (
-              <div key={plant.PlantID}>
-                {plant.PlantName}
-              </div>
-            ))}
-          </div>
-        ))}
+      <TableCell className='border-b border-gray-300'>
+      {user.Companies && user.Companies.length > 0 && user.Companies.some((company: any) => company.Plants.length > 0) ? (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="custom">Ver</Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56">
+            <DropdownMenuGroup>
+              {user.Companies.map((company: any) => (
+                company.Plants.length > 0 && (
+                  <div key={company.CompanyID}>
+                    {company.Plants.map((plant: any) => (
+                      <div key={plant.PlantID}>
+                        {plant.PlantName}
+                      </div>
+                    ))}
+                  </div>
+                )
+              ))}
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ) : <></>}
+
+        
       </TableCell>
     </TableRow>
   ));
@@ -192,12 +222,13 @@ const UserManagementPage = () => {
         <Skeleton className="h-[35px] col-span-2 xl:col-span-1 w-full" />
         </div>
       </div>
-
+      <div className="w-full h-auto rounded-2xl px-16">
       <Skeleton className="h-[550px] w-full " />
+      </div>
       </> :
       <>
        <div className="w-full h-auto rounded-2xl pt-4 px-4">
-        <div className='grid grid-cols-6 md:grid-cols-6 lg:grid-cols-6 xl:grid-cols-6 gap-7 p-0 pt-4 sm:p-4 lg:p-12 lg:pt-4'>
+       <div className='grid grid-cols-6 md:grid-cols-6 lg:grid-cols-6 xl:grid-cols-6 gap-7 p-0 pt-4 sm:p-4 lg:p-12 lg:pt-4'>
           <Input
             type="text"
             placeholder="Buscar por nombre de usuario"
@@ -240,8 +271,10 @@ const UserManagementPage = () => {
                 </Select>
               </div>
               <div>
-                <Label>Plantas</Label>
-                {filteredPlants.length > 0 ? filteredPlants.map((plant, index) => (
+                
+                {filteredPlants.length > 0 && filteredPlants.map((plant, index) => (
+                  <>
+                  <Label>Plantas</Label>
                   <div key={plant.PlantID} className="mb-2">
                     <Select
                       value={selectedPlants[index] || ''}
@@ -261,8 +294,8 @@ const UserManagementPage = () => {
                       </SelectContent>
                     </Select>
                   </div>
-                )):
-                <Label>Plantas</Label>}
+                  </>
+                ))}
               </div>
               <DialogFooter>
                 <Button type="submit" onClick={handleSaveChanges}>
@@ -291,24 +324,23 @@ const UserManagementPage = () => {
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
-                <Button type="submit" onClick={handleDelete}>
-                  Confirmar
-                </Button>
+              <Button type="submit" className='mr-4' onClick={handleDelete}>Si</Button>
+              <Button type="reset" onClick={() => setIsDialogOpen2(false)}>No</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
         </div>
       </div>
-      <div className="border  rounded-md mt-2">
-        <Table>
+      <div className='w-full h-auto rounded-2xl p-0 pt-2 sm:p-4 lg:p-16 mt-2 lg:pt-2 '>
+        <Table className='rounded-2xl '>
           <TableHeader>
-            <TableRow>
-              <TableHead className="w-[100px]">Seleccionar</TableHead>
-              <TableHead>Nombre</TableHead>
-              <TableHead>Correo electrónico</TableHead>
-              <TableHead>Rol</TableHead>
-              <TableHead>Empresa</TableHead>
-              <TableHead>Planta</TableHead>
+            <TableRow className="">
+              <TableHead className="py-2 px-4 text-center ">Seleccionar</TableHead>
+              <TableHead className='py-2 px-4 border-b border-gray-300'>Nombre</TableHead>
+              <TableHead className=' py-2 px-4 border-b border-gray-300'>Correo electrónico</TableHead>
+              
+              <TableHead className='py-2 px-4 border-b border-gray-300'>Empresa</TableHead>
+              <TableHead className='py-2 px-4 border-b border-gray-300'>Planta</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
