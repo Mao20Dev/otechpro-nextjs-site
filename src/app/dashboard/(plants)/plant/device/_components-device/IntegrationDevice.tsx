@@ -3,12 +3,15 @@
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import React from 'react'
+import ExcelJS from 'exceljs';
 
 import { Skeleton } from "@/components/ui/skeleton"
 import { CalendarIcon } from "@radix-ui/react-icons"
 
 import { addDays, format, subDays } from "date-fns"
 import { DateRange } from "react-day-picker"
+
+
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -160,80 +163,131 @@ const fetchData = async (startDate: string, endDate: string) => {
     }
 
 
-    const handleDownloadClick = () => {
+    const handleDownloadClick = async () => {
         if (filteredData.time.length === 0) {
             alert("No data available to download.");
             return;
         }
     
-        let csvContent = "data:text/csv;charset=utf-8,";
+        // Crear una instancia de libro de trabajo
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Datos');
+    
+        // Preparar los encabezados
         const headers = ["time", ...Object.keys(filteredData.variables)];
-        csvContent += headers.join(",") + "\n";
     
-        for (let i = 0; i < filteredData.time.length; i++) {
-            const row = [filteredData.time[i]];
-            headers.slice(1).forEach(header => {
-                row.push(filteredData.variables[header][i]);
-            });
-            csvContent += row.join(",") + "\n";
-        }
-    
-        // Calcular Potencia activa total consumida y Potencia reactiva total consumida
-        let potenciaActivaTotal = 0;
-        let potenciaReactivaTotal = 0;
-        let hasPotenciaActiva = false;
-        let hasPotenciaReactiva = false;
+        // Calcular Potencia activa total y Potencia reactiva total
+        let potenciaActivaTotal = null;
+        let potenciaReactivaTotal = null;
     
         if (filteredData.variables["Potencia activa total"]) {
             const values = filteredData.variables["Potencia activa total"].map(Number);
             if (values.length > 1) {
-                potenciaActivaTotal = values[values.length - 1] - values[0];
+                potenciaActivaTotal = values[values.length - 1] - values[0]; // Mantener valor original sin redondear
             }
-            hasPotenciaActiva = true;
         }
     
         if (filteredData.variables["Potencia reactiva total"]) {
             const values = filteredData.variables["Potencia reactiva total"].map(Number);
             if (values.length > 1) {
-                potenciaReactivaTotal = values[values.length - 1] - values[0];
+                potenciaReactivaTotal = values[values.length - 1] - values[0]; // Mantener valor original sin redondear
             }
-            hasPotenciaReactiva = true;
         }
     
-        // Agregar los valores totales al contenido del CSV si existen
-        csvContent += "\n";
-        if (hasPotenciaActiva) {
-            csvContent += `Potencia activa total consumida:,${potenciaActivaTotal}\n`;
+        // Agregar una fila con los valores calculados al inicio
+        const summaryRow: any = ["Valores Calculados", "Potencia activa total consumida: ","" , "", "", "", "", "", "", "", ""];
+        const nextSummaryRow: any = ["", "Potencia reactiva total consumida: ", "", "", "", "", "", "", "", ""];
+        if (potenciaActivaTotal !== null) {
+            summaryRow[2] = potenciaActivaTotal;
         }
-        if (hasPotenciaReactiva) {
-            csvContent += `Potencia reactiva total consumida:,${potenciaReactivaTotal}\n`;
+        if (potenciaReactivaTotal !== null) {
+            nextSummaryRow[2] =  potenciaReactivaTotal;
+        }
+        worksheet.addRow(summaryRow);
+        worksheet.addRow(nextSummaryRow);
+    
+        // Agregar encabezados
+        worksheet.addRow(headers);
+    
+        // Agregar los datos
+        for (let i = 0; i < filteredData.time.length; i++) {
+            const row = [filteredData.time[i]];
+    
+            headers.slice(1).forEach(header => {
+                const value = filteredData.variables[header][i];
+                // Convertir el valor a número si es posible, o mantenerlo como cadena si no es numérico
+                row.push(isNaN(value) ? value : parseFloat(value));
+            });
+    
+            worksheet.addRow(row);
         }
     
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `Datos_${deviceName}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
+        // Guardar el archivo
+        workbook.xlsx.writeBuffer().then((buffer) => {
+            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `Datos_${deviceName}.xlsx`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        });
+    };
     
 
-
+    const units: any = {
+        "Potencia activa total": "kWh",
+        "Potencia reactiva total": "kVArh",
+        "Factor de potencia": "FP",
+        "Frecuencia": "Hz",
+        "Voltaje fase A": "Volts",
+        "Voltaje fase B": "Volts",
+        "Voltaje fase C": "Volts",
+        "Corriente A": "Amps",
+        "Corriente B": "Amps",
+        "Corriente C": "Amps"
+    };
     
+    const orderOfVariables = [
+        "Potencia activa total",
+        "Potencia reactiva total",
+        "Factor de potencia",
+        "Frecuencia",
+        "Voltaje fase A",
+        "Voltaje fase B",
+        "Voltaje fase C",
+        "Corriente A",
+        "Corriente B",
+        "Corriente C"
+    ];
 
-    const chartsComponent = Object.keys(filteredData.variables).map((key, index) => {
-        console.log('key', key);
-        console.log('filteredData.variables[key]', filteredData.variables[key]);
-    
-        // Convertir los valores a números y calcular la diferencia si la clave es 'Potencia activa total'
+    const orderedVariables = Object.keys(filteredData.variables)
+    .sort((a, b) => {
+        const indexA = orderOfVariables.indexOf(a);
+        const indexB = orderOfVariables.indexOf(b);
+
+        if (indexA !== -1 && indexB !== -1) {
+            return indexA - indexB; // Ordenar según el índice en el array
+        } else if (indexA !== -1) {
+            return -1; // Mantener en el orden especificado
+        } else if (indexB !== -1) {
+            return 1; // Mantener en el orden especificado
+        } else {
+            return a.localeCompare(b); // Orden alfabético para el resto
+        }
+    });
+
+    const chartsComponent = orderedVariables.map((key, index) => {
         let totalDifference = 0;
-        if (key === 'Potencia activa total') {
-            const values = filteredData.variables[key].map(Number); // Convertir todos los valores a números
-            if (values.length > 1) {
-                totalDifference = values[values.length - 1] - values[0]; // Calcular la diferencia
-            }
-        }else if(key === 'Potencia reactiva total'){
+        let formattedTitle = key;
+    
+        if (units[key]) {
+            formattedTitle += ` [${units[key]}]`;
+        }
+    
+        if (key === 'Potencia activa total' || key === 'Potencia reactiva total') {
             const values = filteredData.variables[key].map(Number);
             if (values.length > 1) {
                 totalDifference = values[values.length - 1] - values[0];
@@ -243,20 +297,20 @@ const fetchData = async (startDate: string, endDate: string) => {
         return (
             <div className='flex flex-col py-5 px-1 bg-button-green-gradient rounded-2xl' key={index}>
                 <div className='w-[100%] flex justify-center pb-4 text-md font-semibold text-slate-200'>
-                    {key}
+                    {formattedTitle}
                 </div>
-                {key === 'Potencia activa total'&& (
-                    <div className='w-[100%] flex justify-center pb-4 text-md font-semibold text-slate-200'>Total consumido: {totalDifference.toFixed(2)}</div> // Mostrar la diferencia calculada
+                {(key === 'Potencia activa total' || key === 'Potencia reactiva total') && (
+                    <div className='w-[100%] flex justify-center pb-4 text-md font-semibold text-slate-200'>
+                        Total consumido: {totalDifference.toFixed(2)}
+                    </div>
                 )}
-                {key === 'Potencia reactiva total'&& (
-                    <div className='w-[100%] flex justify-center pb-4 text-md font-semibold text-slate-200'>Total consumido: {totalDifference.toFixed(2)}</div> // Mostrar la diferencia calculada
-                )}
-                <div className='w-[100%] pr-6 '>
+                <div className='w-[100%] pr-6'>
                     <Graph data={formatData(filteredData.time, filteredData.variables[key])} id={key} graphStyle={{ height: '350px' }} />
                 </div>
             </div>
         );
     });
+
     
 
     return (

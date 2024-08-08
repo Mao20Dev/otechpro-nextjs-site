@@ -28,6 +28,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
     "dygraphs": "^2.2.1",
+    "exceljs": "^4.4.0",
     "framer-motion": "^11.2.11",
     "lodash": "^4.17.21",
     "lodash.debounce": "^4.0.8",
